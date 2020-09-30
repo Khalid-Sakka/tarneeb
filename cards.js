@@ -10,8 +10,8 @@ class Card{
 		this.revealed = false;
 		this.x;
 		this.y;
-		this.w = width/10;
-		this.h = this.w * 1.3;
+		this.w = Card.w;
+		this.h = Card.h;
 	}
 	
 	show(){
@@ -83,4 +83,13 @@ class Card{
 		}
 	return array;
 	}
+	
+	static get w(){
+		return width/10;
+	}
+	
+	static get h(){
+		return 1.3*width/10;
+	}
+	
 }
