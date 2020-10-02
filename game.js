@@ -22,6 +22,7 @@ function newGame(){
 
 function runGame(){
 	debp.html(status);
+	p.html(T);
 	background(0,127,0);
 	if(status == "init"){
 		let pad = 0.8*width/52;
@@ -76,6 +77,21 @@ function cutDeck(index){
 	if(index < deck.length){
 		let p2 = deck.splice(index, deck.length - index);
 		deck = concat(p2, deck);
+		let s = deck[deck.length-1].suit;
+		switch(s){
+			case "h" :
+			T = "d";
+			break;
+			case "s" :
+			T = "c"
+			break;
+			case "d" :
+			T = "h";
+			break;
+			case "c" :
+			T = "s";
+			break;
+		}
 		status = "dealing";
 	}
 }
@@ -88,10 +104,31 @@ function deal(){
 			dealt = (dealt+1)%4;
 		}else{
 			let stack = deck.splice(0,1);
+			//TODO : add showing the last card in each player's hand.
+			//stack[0].reveal();
+			//if(players[dealt] != player){
+				//setTimeout(()=>{
+					//stack[0].revealed = false;
+				//},1000);
+			//}
 			players[dealt].dealCards(stack);
 			dealt = (dealt+1)%4;
 		}
 	}else{
+		let suits = "hsdc"
+		for(let p of players){
+			p.hand.sort((a,b)=>{
+				if(suits.indexOf(a.suit) > suits.indexOf(b.suit)){
+					return 1;
+				}else if(suits.indexOf(a.suit) < suits.indexOf(b.suit)){
+					return -1;
+				}else if(vals.indexOf(a.val) > vals.indexOf(b.val)){
+					return 1;
+				}else{
+					return -1;
+				}
+			});
+		}
 		status = "bidding";
 	}
 	initHands();
@@ -106,7 +143,7 @@ function showHands(){
 }
 
 function initHands(){
-	let xPad = Card.w/2;
+	let xPad = Card.w/1.75;
 	let yPad = Card.h/3;
 	for(let pl of players){
 		let plx = pl.num%2 === 0? width/6 : undefined;

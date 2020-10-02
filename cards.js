@@ -1,4 +1,4 @@
-let vals = "A234567890JQK";
+let vals = "234567890JQKA";
 class Card{
 	constructor(val, suit){
 		this.val = val;
