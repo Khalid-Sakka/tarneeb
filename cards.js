@@ -12,47 +12,62 @@ class Card{
 		this.y;
 		this.w = Card.w;
 		this.h = Card.h;
+		//img revealed
+		this.imgR = createGraphics(this.w,this.h);
+		//img hidden
+		this.imgH = createGraphics(this.w,this.h);
+		
+		this.imgR.background(255,0);
+		this.imgR.rectMode(CENTER);
+		this.imgR.stroke(0);
+		this.imgR.strokeWeight(this.w/40);
+			this.imgR.fill(255,255,245);
+			this.imgR.rect(this.w/2,this.h/2,this.w,this.h,PI * sc);
+			this.imgR.noFill();
+			this.imgR.rect(this.w/2,this.h/2,this.w/1.18, this.h/1.2, PI * sc);
+			this.imgR.textAlign(CENTER);
+			this.imgR.textSize(this.w * 0.4);
+			let col;
+			col = this.col == "red" ? color(255,0,0) : 0;
+			this.imgR.fill(col);
+			let suitS;
+			switch(this.suit){
+				case "h":
+				suitS = "❤";
+				break;
+				case "s":
+				suitS = "♠";
+				break;
+				case "d":
+				suitS = "◆";
+				break;
+				case "c":
+				suitS = "♣";
+			}
+			let valS;
+			valS = this.val == "0" ? "10" : this.val;
+			this.imgR.text(valS + suitS, this.w/2,this.h/2 - this.h * 0.12);
+			
+			
+		this.imgH.background(255,0);
+		this.imgH.rectMode(CENTER);
+		this.imgH.stroke(0);
+		this.imgH.strokeWeight(this.w/40);
+			this.imgH.fill(200, 200, 225);
+			this.imgH.rect(this.w/2,this.h/2,this.w,this.h, PI);
+			this.imgH.noFill();
+			this.imgH.rect(this.w/2,this.h/2,this.w/1.18, this.h/1.2);
+			let ly = this.h/2.4;
+			this.imgH.line(this.w/2,this.h/2 - ly, this.w/2,this.h/2 + ly);
 	}
 	
 	show(){
 		push();
-		rectMode(CENTER);
-		stroke(0);
-		strokeWeight(this.w/40);
-		if (this.revealed){
-			fill(255,255,245);
-			rect(this.x,this.y,this.w,this.h,PI * sc);
-			noFill();
-			rect(this.x, this.y,this.w/1.18, this.h/1.2, PI * sc);
-			textAlign(CENTER);
-			textSize(this.w * 0.4);
-			let col;
-			col = this.col == "red" ? color(255,0,0) : 0;
-			fill(col);
-			let suit;
-			switch(this.suit){
-				case "h":
-				suit = "❤";
-				break;
-				case "s":
-				suit = "♠";
-				break;
-				case "d":
-				suit = "◆";
-				break;
-				case "c":
-				suit = "♣";
-			}
-			let val;
-			val = this.val == "0" ? "10" : this.val;
-			text(val + suit, this.x, this.y - this.h * 0.12);
+		imageMode(CENTER);
+		if(this.revealed){
+			image(this.imgR, this.x, this.y);
 		} else {
-			fill(200, 200, 225);
-			rect(this.x,this.y,this.w,this.h, PI);
-			noFill();
-			rect(this.x, this.y,this.w/1.18, this.h/1.2);
-			let ly = this.h/2.4;
-			line(this.x, this.y - ly, this.x, this.y + ly);
+			image(this.imgH, this.x, this.y);
 		}
 		pop()
 	}

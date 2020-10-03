@@ -4,7 +4,7 @@ function setup() {
 	let cnv = createCanvas(windowWidth, windowWidth);
 	cnv.style("touch-action : null");
 	fr = createP();
-	p = createP("hello");
+	p = createP("p");
 	debp = createP();
 	sc = width/400;
 	newGame();
