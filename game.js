@@ -24,10 +24,10 @@ function newGame(){
 
 function runGame(){
 	debp.html(status);
-	p.html(T);
 	background(0,127,0);
 	if(status == "init"){
 		deck = Card.shuffle(deck);
+		lastTurn = turn;
 		bids = [];
 		bidSum = 0;
 		let pad = 0.8*width/52;
@@ -47,7 +47,6 @@ function runGame(){
 		}else if(!cut){
 			setTimeout(()=>{
 				cutDeck(floor(random(52)));
-				createP("cut");
 			},500);
 			cut = true;
 		}
@@ -79,7 +78,7 @@ function runGame(){
 	}else if(status = "finishing"){
 		resetDeck();
 		cut = false;
-		turn = ++lastTurn;
+		turn = (lastTurn+1)%4;
 		status = "init";
 	}
 }
@@ -95,7 +94,6 @@ function handleClicks(){
 }
 
 function cutDeck(index){
-	createP(deck);
 	if(index < deck.length){
 		let p2 = deck.splice(index, deck.length - index);
 		deck = concat(p2, deck);
@@ -164,6 +162,30 @@ function showHands(){
 		for(let c of p.hand){
 			c.show();
 		}
+	}
+	if(status != "init" && status != "dealing"){
+		let t, c = color(0,127);;
+		switch(T){
+			case "h":
+			t = "❤";
+			c = color(255,0,0127);
+			break;
+			case "s":
+			t = "♠";
+			break;
+			case "d":
+			t = "◆";
+			c = color(255,0,0,127);
+			break;
+			case "c":
+			t = "♣";
+		}
+		push();
+		fill(c);
+		textAlign(CENTER, CENTER);
+		textSize(width/5);
+		text(t, width/2,height/2);
+		pop();
 	}
 }
 
