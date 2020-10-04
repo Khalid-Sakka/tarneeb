@@ -168,7 +168,7 @@ function showHands(){
 		switch(T){
 			case "h":
 			t = "❤";
-			c = color(255,0,0127);
+			c = color(255,0,0,127);
 			break;
 			case "s":
 			t = "♠";

@@ -35,6 +35,7 @@ class Player{
 			"c" : 0,
 			"A" : [],
 			"K" : [],
+			"Q" : [],
 			"superSuit" : []
 		};
 		
@@ -51,11 +52,26 @@ class Player{
 		}
 		for(let k of handStatus.K){
 			if(k != T){
-				if(handStatus[k] < 5) bid++;
+				if(handStatus[k] < 4) bid++;
+				else if(handStatus[k] < 5 && Math.random() < 2/handStatus[k]) bid++;
 			}
 		}
-		if(handStatus.superSuit.includes("A")) bid++;
-		if(handStatus.superSuit.includes("K") && handStatus[T] > 1) bid++;
+		for(let q of handStatus.Q){
+			if(q != T){
+				if(handStatus[q] == 3 && Math.random() < .5) bid++;
+				else if(handStatus[q] == 2 && handStatus.A.includes(handStatus[q])) bid++;
+			}
+		}
+		for(let i = 0; i < vals.length; i++){
+			let index = vals.length - i - 1;
+			if(handStatus.superSuit.includes(vals[index]) && handStatus[T] > i) bid++;
+		}
+		
+		if(handStatus[T] > 5) bid += handStatus[T] - 5;
+		if(handStatus["h"] < 2 && handStatus[T] > handStatus["h"]) bid++
+		if(handStatus["s"] < 2 && handStatus[T] > handStatus["s"]) bid++
+		if(handStatus["d"] < 2 && handStatus[T] > handStatus["d"]) bid++
+		if(handStatus["c"] < 2 && handStatus[T] > handStatus["c"]) bid++
 		//TODO : make the bidding algorithm a little smarter.
 		return max(minBid, bid);
 	}
