@@ -3,6 +3,7 @@ class Player{
 	constructor(num, human = false){
 		this.num = num;
 		this.isHuman = human;
+		this.hasBid = true;
 		this.score = 0;
 		this.teamMate = null;
 		this.hand = [];
@@ -24,7 +25,7 @@ class Player{
 		}
 	}
 	
-	bid(){
+	bid(humanBid){
 		let minBid = 2;
 		if(this.score >= 40) minBid = 4;
 		else if(this.score >= 30) minBid = 3;

@@ -1,4 +1,5 @@
-let deck, refCard, players, player, T, turn, lastTurn, status, cut, dealt, bids, bidSum ;
+let deck, refCard, players, player, T, turn, 
+lastTurn, status, cut, dealt, bids ;
 
 
 function newGame(){
@@ -14,7 +15,7 @@ function newGame(){
 	players[0].partner(players[2]);
 	players[1].partner(players[3]);
 	player = players[0];
-	turn = floor(random(4));
+	turn = 1;//floor(random(4));
 	lastTurn = turn;
 	status = "init";
 	cut = false;
@@ -24,6 +25,7 @@ function newGame(){
 
 function runGame(){
 	debp.html(status);
+	p.html(bids);
 	background(0,127,0);
 	if(status == "init"){
 		deck = Card.shuffle(deck);
@@ -50,6 +52,10 @@ function runGame(){
 			},500);
 			cut = true;
 		}
+		players.map(x =>{
+			x.hasBid = false;
+			return x;
+		});
 	}else if(status == "dealing"){
 		if(deck.length > 0){
 			refCard.show();
@@ -61,10 +67,16 @@ function runGame(){
 	}else if(status == "sorting"){
 		showHands();
 	}else if(status == "bidding"){
-		let bid = players[turn].bid();
-		bidSum += bid;
-		turn = (turn + 1)%4;
-		bids.push(bid);
+		showHands();
+		if(players[turn] != player && !players[turn].hasBid){
+			let bid = players[turn].bid();
+			bids.push(bid);
+			players[turn].hasBid = true; 
+			turn = (turn + 1)%4;
+		}else if(players[turn] == player){
+			showBids();
+		}
+		let bidSum =  bids.reduce((a,b)=> a+b);
 		if(bids.length == 4 && bidSum >= 11){
 			status = "playing";
 			let s1 = bids.splice(0,4  -turn);
@@ -72,7 +84,6 @@ function runGame(){
 		}else if(bids.length == 4){
 			status = "finishing";
 		}
-		showHands();
 	}else if(status == "playing"){
 		showHands();
 	}else if(status = "finishing"){
@@ -90,7 +101,48 @@ function handleClicks(){
 			let index = floor(constrain(map(mouseX, 0, width, 0, 52),0,52));
 			cutDeck(index);
 		}
+	}else if(status == "bidding"){
+		if(players[turn] == player && !player.hasBid){
+			let result;
+			if(mouseY > 125*sc && mouseY < 165*sc){
+				if(mouseX > sc*80 && mouseX < sc*120 && player.score < 30){
+					result = 2
+				}else if(mouseX > sc*130 && mouseX < sc*170&&player.score < 40){
+					result = 3
+				}else if(mouseX > sc* 180 && mouseX < sc*220){
+					result = 4
+				}else if(mouseX > sc* 230 && mouseX < sc* 270){
+					result = 5
+				}else if(mouseX > sc* 280 && mouseX < sc* 320){
+					result = 6
+				}
+			}else if(mouseY > 175*sc && mouseY < 215*sc){
+				if(mouseX > sc*105 && mouseX < sc*145){
+					result = 7
+				}else if(mouseX > sc*155 && mouseX < sc*195){
+					result = 8
+				}else if(mouseX > sc*205 && mouseX < sc*245){
+					result = 9
+				}else if(mouseX > sc*255 && mouseX < sc*295){
+					result = 10
+				}
+			}else if(mouseY > 225*sc && mouseY < 265*sc){
+				if(mouseX > sc*130 && mouseX < sc*170){
+					result = 11
+				}else if(mouseX > sc*180 && mouseX < sc*220){
+					result = 12
+				}else if(mouseX > sc*230 && mouseX < sc*270){
+					result = 13
+				}
+			}
+			if(result){
+				bids.push(result);
+				turn = (turn + 1)%4;
+				player.hasBid = true;
+			}
+		}
 	}
+	
 }
 
 function cutDeck(index){
@@ -211,6 +263,31 @@ function initHands(){
 			}
 		}
 	}
+}
+
+function showBids(){
+	push();
+	for(let i = 0; i < 12; i++){
+		let start = i < 5? 80*sc : i < 9? 105*sc : 130*sc;
+		let w = 40*sc;
+		let x;
+		if(i < 5) x = i*(w + 10*sc) + start;
+		else if(i < 9) x = (i-5)*(w + 10*sc) + start;
+		else x = (i - 9)*(w + 10*sc) + start;
+		let y = i < 5? 125*sc : i < 9? 175*sc : 225*sc;
+		let v = i < 5? i+2 : i < 9? (i+2)*2 : (i + 2) * 3;
+		stroke(0,150);
+		strokeWeight(sc);
+		fill(255,150);
+		rect(x, y, w, w,4*sc);
+		if(v < floor(player.score/10)) fill(150,150);
+		else fill(0,0,255,150);
+		textAlign(CENTER, CENTER);
+		textSize(width/20);
+		text(v, x+w/2,y+w/2);
+	}
+	
+	pop();
 }
 
 function resetDeck(){
