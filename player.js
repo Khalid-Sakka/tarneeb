@@ -3,11 +3,13 @@ class Player{
 	constructor(num, human = false){
 		this.num = num;
 		this.isHuman = human;
-		this.hasBid = true;
+		this.hasBid = false;
+		this.hasPlayed = false
 		this.score = 0;
 		this.teamMate = null;
 		this.hand = [];
 		this.loot = [];
+		this.memory = {};
 	}
 	
 	partner(p){
@@ -23,6 +25,10 @@ class Player{
 		}else if(c instanceof Card){
 			this.hand.push(c);
 		}
+	}
+	
+	play(suit){
+		let av = this.availableMoves(suit);
 	}
 	
 	bid(humanBid){
@@ -75,6 +81,23 @@ class Player{
 		if(handStatus["c"] < 2 && handStatus[T] > handStatus["c"]) bid++
 		//TODO : make the bidding algorithm a little smarter.
 		return max(minBid, bid);
+	}
+	
+	availableMoves(suit){
+		let hasSuit = false;
+		let av = [];
+		for(let c of this.hand){
+			if(c.suit == suit){
+				hasSuit = true;
+				av.push(c);
+			}
+		}
+		if(!hasSuit){
+			for(let c of this.hand){
+				av.push(c);
+			}
+		}
+		return av;
 	}
 	
 	

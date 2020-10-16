@@ -1,5 +1,5 @@
-let deck, refCard, players, player, T, turn, 
-lastTurn, status, cut, dealt, bids ;
+let deck, refCard, slots, players, player, T, turn, start, 
+lastTurn, status, cut, dealt, bids, roundOver ;
 
 
 function newGame(){
@@ -15,12 +15,19 @@ function newGame(){
 	players[0].partner(players[2]);
 	players[1].partner(players[3]);
 	player = players[0];
-	turn = 1;//floor(random(4));
+	turn = floor(random(4));
+	start = turn;
 	lastTurn = turn;
 	status = "init";
 	cut = false;
 	dealt = turn;
 	bids = [];
+	slots = [
+		{card:null, x : width/2, y: height-2*Card.h, id : 0},
+		{card:null, x : width-2.5*Card.w, y : height/2, id : 1},
+		{card:null, x : width/2, y : 2*Card.h, id : 2},
+		{card:null, x:2.5*Card.w, y : height/2, id : 3}
+	];
 }
 
 function runGame(){
@@ -32,6 +39,7 @@ function runGame(){
 		lastTurn = turn;
 		bids = [];
 		bidSum = 0;
+		roundOver = false;
 		let pad = 0.8*width/52;
 		for(let i = 0; i < deck.length; i++){
 			c = deck[i];
@@ -76,7 +84,7 @@ function runGame(){
 		}else if(players[turn] == player){
 			showBids();
 		}
-		let bidSum =  bids.reduce((a,b)=> a+b);
+		let bidSum = bids.length < 4? 0: bids.reduce((a,b)=> a+b);
 		if(bids.length == 4 && bidSum >= 11){
 			status = "playing";
 			let s1 = bids.splice(0,4  -turn);
@@ -86,6 +94,8 @@ function runGame(){
 		}
 	}else if(status == "playing"){
 		showHands();
+		showSlots();
+		ply(turn);
 	}else if(status = "finishing"){
 		resetDeck();
 		cut = false;
@@ -93,6 +103,26 @@ function runGame(){
 		status = "init";
 	}
 }
+/****************************************/
+function ply(n){
+	if(!roundOver){
+		if(players[n] == player){
+			turn = (turn+1)%4;
+		}else{
+			if(!players[n].hasPlayed){
+				setTimeout(()=>{
+					players[n].play("h");
+					turn = (turn+1)%4;
+					players[n].hasPlayed = false;
+				}, 200);
+				players[n].hasPlayed = true;
+			}
+		}
+	}else{
+		status = "finishing";
+	}
+}
+/****************************************/
 
 function handleClicks(){
 	if(status == "init"){
@@ -288,6 +318,22 @@ function showBids(){
 	}
 	
 	pop();
+}
+
+function showSlots(){
+	for(let i = 0; i < 4; i++){
+		if(slots[i].card == null){
+			push();
+			rectMode(CENTER);
+			fill(255,127);
+			rect(slots[i].x, slots[i].y, Card.w, Card.h, PI*sc);
+			pop();
+		}else{
+			slots[i].card.x = slots[i].x;
+			slots[i].card.y = slots[i].y;
+			slots[i].card.show();
+		}
+	}
 }
 
 function resetDeck(){
